@@ -13,7 +13,7 @@ if(sys[5] == "x86_64"){
 } else if (sys[6]=="Rahija") {
   wdir = "C:/Users/rahija/Dropbox/suSoPara" #FAO PC
   para = "C:/Users/rahija/Dropbox/suSoPara/uganda_para/"
-#} else if (#insert CAROLOTTA condition){
+#} else if (#insert CARLOTTA condition){
   #wdir = 
   #para = 
 } else {
@@ -22,7 +22,6 @@ if(sys[5] == "x86_64"){
 
 setwd(wdir)
 
-#some meaningless comment
 #Import paradata, add column to id interview, 
 #create posix column for actions
 p.files <- list.files(para, pattern = ".tab")

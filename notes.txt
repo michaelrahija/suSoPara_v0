@@ -1,0 +1,13 @@
+1. Why when "GroupDisabled" is the action, does an interviewid appear in the variable name column?
+
+
+
+
+response level -> cleanMicro, reads data files and binds them together in single data frame
+item level (question) -> tabulation after clean micro, make independent function
+	-> compute n, mean, median, max, minimium, and sd of response time, also # of times the answer was changed
+
+comments table -> create table w/ variables, and number of comments collected on each
+
+
+

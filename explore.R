@@ -30,17 +30,14 @@ p.files <- paste0(para,p.files)
 
 # Create table with all actions
 source("R/actionTable.R")
-#para.list <- list()
-
-
 
 system.time({
   
-  #para.list <- vector(mode = "list", length = length(p.files)) 
-  para.list <- list()
+#para.list <- vector(mode = "list", length = length(p.files)) 
+para.list <- list()
   
 for(i in 1:length(p.files)){
-
+  i
   temp.df <- actionTable(dir = p.files[i])
   
   
@@ -50,10 +47,19 @@ for(i in 1:length(p.files)){
 
 
 para.df <- data.table::rbindlist(para.list)
+rm(para.list)
+
 para.df <- data.frame(para.df)
 
+
+###--TEMP READ 1 FILE TO CREATE VARIABLE TABLE
+
+
+#para.df <- actionTable(dir = p.files[2])
+#-rmeove
+
 #-Create table which summarizes variables
-source("R/variableTable.R")
+source("R/variableTable.R") #FUNCTION STARTED, NOT FINISHED
 
 
 

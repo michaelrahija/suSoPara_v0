@@ -1,13 +1,25 @@
 1. Why when "GroupDisabled" is the action, does an interviewid appear in the variable name column?
 
 
+Functions
+==========================
+
+actionTable -> cleanMicro, reads data files and binds them together in single data frame. 
+ -> each row in the df is an action on the tablet with the time and date stamp, and 
+ - > time in seconds timeinsecond = d[i+1,time] - d[i, time]
+-> problem when there are two comments set in a row, difficult to attribute to specific variable
+-> maybe should group by variables, and then take a look at 
 
 
-response level -> cleanMicro, reads data files and binds them together in single data frame
-item level (question) -> tabulation after clean micro, make independent function
-	-> compute n, mean, median, max, minimium, and sd of response time, also # of times the answer was changed
-
-comments table -> create table w/ variables, and number of comments collected on each
+variableTable -> tabulation after clean micro, make independent function
+	-> table by variable name
+		-> compute n, mean, median, max, minimium, sd, also # of times the answer changed, # of time a question was commented
 
 
+interviewPara <- 
+
+Wish list from WB
+===========================
+It would be nice if SuSo exported a dataset that described each variable
+ -> Could perhaps look at function to parse xml metadata
 

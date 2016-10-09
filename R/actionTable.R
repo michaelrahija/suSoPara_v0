@@ -4,8 +4,8 @@
 
 actionTable <- function(dir = NA){
   
+  stop("Issue with computing time when there are two comments set in consecutive rows!!!")
   #if(dir == NA) stop("Must add a directory!")
-
 
    temp <- read.delim(dir,
                       header = FALSE,
@@ -52,10 +52,11 @@ actionTable <- function(dir = NA){
                  role,
                  user,
                  variable_name,
-                 response,
+                 rosterRowRef,
                  date,
                  time,
-                 rosterRowRef)
+                 response
+                 )
   
   #- add column for posix
   temp$posix <- paste0(temp$date, " ", temp$time)
@@ -74,7 +75,7 @@ actionTable <- function(dir = NA){
   
   for(i in 1:nrow(temp)){
     
-    #if first iteration, just put 0 b/c first questions
+    #if first iteration, just put 0 b/c first questions can't compute time
     if(i == 1){
       time.temp <- NA
     } else {
@@ -87,6 +88,36 @@ actionTable <- function(dir = NA){
   
   temp <- arrange(temp, id, actionOrder)
   
+  #########################################################
+  #-SUM comment set in seconds to variable response time ##
+  #########################################################
+  
+  if("CommentSet" %in% unique(temp$action)){
+    #create vector of ids where there is a comment set right after answer
+    commentrows <- c()
+    
+    for(i in 1:nrow(temp)){
+      
+        if(temp$action[i] == "AnswerSet" & temp$action[i+1] == "CommentSet"){
+            commentrows <- append(commentrows, temp$actionOrder[i])
+        } else {
+            commentrows <- append(commentrows, FALSE)
+        }      
+      }
+      
+    commentrows <- commentrows[commentrows != 0]
+    
+    #sum secs since last action for id'ed rows, and put NA for comments
+    for(i in 1:commentrows){
+      
+      temp$SecsSinceLastAction[commentrows[i]] <- difftime(temp$posix[commentrows[i]+2],
+                                                           temp$posix[commentrows[i]])
+      
+      temp$SecsSinceLastAction[temp$action == "CommentSet"] <- NA
+    }  
+  }
+##NEED ALTERNATIVE APPROACH, PERHAPS ID ROWS W/ COMMENTSET AND RECORD VARIABLE
+##SEARCH ROWS AND FIND THE CLOSEST ROW W/ CORRESPONDING VARIABLE NAME.  
 temp
 
 }

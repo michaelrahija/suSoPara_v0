@@ -4,7 +4,7 @@
 
 actionTable <- function(dir = NA){
   
-  stop("Issue with computing time when there are two comments set in consecutive rows!!!")
+  #stop("Issue with computing time when there are two comments set in consecutive rows!!!")
   #if(dir == NA) stop("Must add a directory!")
 
    temp <- read.delim(dir,
@@ -92,30 +92,42 @@ actionTable <- function(dir = NA){
   #-SUM comment set in seconds to variable response time ##
   #########################################################
   
-  if("CommentSet" %in% unique(temp$action)){
-    #create vector of ids where there is a comment set right after answer
-    commentrows <- c()
-    
-    for(i in 1:nrow(temp)){
-      
-        if(temp$action[i] == "AnswerSet" & temp$action[i+1] == "CommentSet"){
-            commentrows <- append(commentrows, temp$actionOrder[i])
-        } else {
-            commentrows <- append(commentrows, FALSE)
-        }      
-      }
-      
-    commentrows <- commentrows[commentrows != 0]
-    
-    #sum secs since last action for id'ed rows, and put NA for comments
-    for(i in 1:commentrows){
-      
-      temp$SecsSinceLastAction[commentrows[i]] <- difftime(temp$posix[commentrows[i]+2],
-                                                           temp$posix[commentrows[i]])
-      
-      temp$SecsSinceLastAction[temp$action == "CommentSet"] <- NA
-    }  
-  }
+  comment.df <- filter(temp, action == "CommentSet")
+  
+  rowids <- unique(comment.df$actionOrder)
+  which(temp$actionOrder == rowids) #dir = p.files[15] provides consecutive comments
+  
+  #1 Identify the actionOrder #s of Comments set
+  #Start at actionOrder and go to row 1, the first row that's encountered with AnswerSet
+  #and matches the variable name of the comment set. <- This is the correct comment
+  # Then add time of the comment set to the variable. Proceed to next comment set.
+  
+  #THIS APPROACH LOOKS FOR CONSECTUTIVE ROWS WITH COMMENTSET AND ANSWER SET
+  #THE ISSUE IS THAT SOMETIMES TWO CONSECUTIVE ROWS HAVE COMMENT SET
+  # if("CommentSet" %in% unique(temp$action)){
+  #   #create vector of ids where there is a comment set right after answer
+  #   commentrows <- c()
+  # 
+  #   for(i in 1:nrow(temp)){
+  # 
+  #       if(temp$action[i] == "AnswerSet" & temp$action[i+1] == "CommentSet"){
+  #           commentrows <- append(commentrows, temp$actionOrder[i])
+  #       } else {
+  #           commentrows <- append(commentrows, FALSE)
+  #       }
+  #     }
+  # 
+  #   commentrows <- commentrows[commentrows != 0]
+  # 
+  #   #sum secs since last action for id'ed rows, and put NA for comments
+  #   for(i in 1:commentrows){
+  # 
+  #     temp$SecsSinceLastAction[commentrows[i]] <- difftime(temp$posix[commentrows[i]+2],
+  #                                                          temp$posix[commentrows[i]])
+  # 
+  #     temp$SecsSinceLastAction[temp$action == "CommentSet"] <- NA
+  #   }
+  # }
 ##NEED ALTERNATIVE APPROACH, PERHAPS ID ROWS W/ COMMENTSET AND RECORD VARIABLE
 ##SEARCH ROWS AND FIND THE CLOSEST ROW W/ CORRESPONDING VARIABLE NAME.  
 temp

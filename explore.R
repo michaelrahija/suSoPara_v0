@@ -12,7 +12,7 @@ if(sys[5] == "x86_64"){
   para = "~/Dropbox/suSoPara_data/uganda_para/"
 } else if (sys[6]=="Rahija") {
   wdir = "C:/Users/rahija/Dropbox/suSoPara" #FAO PC
-  para = "C:/Users/rahija/Dropbox/suSoPara/uganda_para/"
+  para = "C:/Users/rahija/Dropbox/suSoPara_data/uganda_para/"
 #} else if (#insert CARLOTTA condition){
   #wdir = 
   #para = 

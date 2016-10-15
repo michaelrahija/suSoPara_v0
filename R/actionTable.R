@@ -92,10 +92,28 @@ actionTable <- function(dir = NA){
   #-SUM comment set in seconds to variable response time ##
   #########################################################
   
+  #find row ids with "Comment Set"
   comment.df <- filter(temp, action == "CommentSet")
   
+  #finds actionOrder
   rowids <- unique(comment.df$actionOrder)
-  which(temp$actionOrder == rowids) #dir = p.files[15] provides consecutive comments
+  
+  #finds rowids
+  rowids <- which(temp$actionOrder %in% rowids) 
+  
+  #create list where each element is rowid containing the reverse sequence
+  l <- lapply(rowids, function(x) rev(1:x))
+  names(l) <- rowids
+  
+  #loop through rows going from row id to the beginning looking for variable
+  for(i in 1:length(l)){
+    vartosearch <- temp$variable_name[l[[1]][1]] #Looping through elements, change to i
+    
+    
+    
+    
+  }
+  }
   
   #1 Identify the actionOrder #s of Comments set
   #Start at actionOrder and go to row 1, the first row that's encountered with AnswerSet

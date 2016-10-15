@@ -23,3 +23,6 @@ Wish list from WB
 It would be nice if SuSo exported a dataset that described each variable
  -> Could perhaps look at function to parse xml metadata
 
+
+
+2. List variables, need to sum time for every element in list

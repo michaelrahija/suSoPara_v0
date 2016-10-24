@@ -68,8 +68,6 @@ actionTable <- function(dir = NA){
   #- sort rows, by time, and add order column
   temp <- arrange(temp, posix)
   
-  
-  
   #-compute item response times
   times <- c()
   
@@ -79,7 +77,9 @@ actionTable <- function(dir = NA){
     if(i == 1){
       time.temp <- NA
     } else {
-      time.temp <- difftime(temp$posix[i],temp$posix[i-1])
+      time.temp <- difftime(temp$posix[i],
+                            temp$posix[i-1],
+                            units = "secs")
     }
     times <- append(times, time.temp)
   }
@@ -87,34 +87,28 @@ actionTable <- function(dir = NA){
   temp$SecsSinceLastAction <- times
   
   temp <- arrange(temp, id, actionOrder)
-  
+
+
   #########################################################
   #-SUM comment set in seconds to variable response time ##
   #########################################################
   
-  #find row ids with "Comment Set"
-  comment.df <- filter(temp, action == "CommentSet")
-  
-  #finds actionOrder
-  rowids <- unique(comment.df$actionOrder)
-  
-  #finds rowids
-  rowids <- which(temp$actionOrder %in% rowids) 
-  
-  #create list where each element is rowid containing the reverse sequence
-  l <- lapply(rowids, function(x) rev(1:x))
-  names(l) <- rowids
-  
-  #loop through rows going from row id to the beginning looking for variable
-  for(i in 1:length(l)){
-    vartosearch <- temp$variable_name[l[[1]][1]] #Looping through elements, change to i
-    
-    
-    
-    
-  }
-  }
-  
+  # rows <- filter(temp, action == "CommentSet")
+  # rowids <- unique(rows$actionOrder)
+  # 
+  # 
+  # for(i in 1:length(rowids)){
+  #   
+  #   x <- temp[1:rowids[1],]
+  #   x <- filter(x, variable_name == temp$variable_name[rowids[1]] & action == "AnswerSet")
+  #   x <- x[1,]
+  #   
+  #   temp$SecsSinceLastAction[temp$actionOrder == x$actionOrder] <- temp$SecsSinceLastAction[temp$actionOrder == x$actionOrder] + temp$SecsSinceLastAction[rowids[1]]
+  # 
+  #   
+  # }
+  # 
+  # 
   #1 Identify the actionOrder #s of Comments set
   #Start at actionOrder and go to row 1, the first row that's encountered with AnswerSet
   #and matches the variable name of the comment set. <- This is the correct comment

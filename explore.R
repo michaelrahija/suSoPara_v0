@@ -2,14 +2,16 @@
 library(tidyr)
 library(dplyr)
 library(foreign)
-library(readr)
 library(reshape)
+library(XML)
 
 sys <- Sys.info()
 
 if(sys[5] == "x86_64"){
   wdir = "~/Dropbox/suSoPara" #Mac
   para = "~/Dropbox/suSoPara_data/uganda_para/"
+  intAction = "~/Dropbox/suSoPara_data/uganda_interviewActions/" 
+  ddi = "~/Dropbox/suSoPara_data/uganda_ddi/"
 } else if (sys[6]=="Rahija") {
   wdir = "C:/Users/rahija/Dropbox/suSoPara" #FAO PC
   para = "C:/Users/rahija/Dropbox/suSoPara_data/uganda_para/"
@@ -22,6 +24,29 @@ if(sys[5] == "x86_64"){
 
 setwd(wdir)
 
+#########################################
+##-Interview Actions Files Tabulations-##
+#########################################
+df <- read.delim(paste0(intAction,
+                        "interview_actions.tab"),
+                 stringsAsFactors = FALSE)
+
+source("R/interviewTable.R")
+int <- interviewTable(df)
+head(int)
+
+source("R/interviewer_table.R")
+intR <- interviewer_table(data = df)
+intR
+
+source("R/supervisor_table.R")
+supR <- supervisor_table(data = df)
+supR
+
+############################
+#-PARADATA - trace files  ##
+############################
+
 #Import paradata, add column to id interview, 
 #create posix column for actions
 p.files <- list.files(para, pattern = ".tab")
@@ -30,77 +55,41 @@ p.files <- paste0(para,p.files)
 
 # Create table with all actions
 source("R/actionTable.R")
+system.time(x <- lapply(p.files, actionTable))
+y <- data.table::rbindlist(x)
 
-system.time({
-  
-#para.list <- vector(mode = "list", length = length(p.files)) 
-para.list <- list()
-  
-for(i in 1:length(p.files)){
-  i
-  temp.df <- actionTable(dir = p.files[i])
-  
-  
-  
-  para.list[[i]] <-  temp.df
-}})
-
-
-para.df <- data.table::rbindlist(para.list)
-rm(para.list)
-
-para.df <- data.frame(para.df)
-
-
-###--TEMP READ 1 FILE TO CREATE VARIABLE TABLE
-
-
-#para.df <- actionTable(dir = p.files[2])
-#-rmeove
+head(y)
 
 #-Create table which summarizes variables
 source("R/variableTable.R") #FUNCTION STARTED, NOT FINISHED
+system.time(z <- variableTable(y))
+options(scipen=999)
+head(z)
 
 
+###- DDI metadata
+ddi <- paste0(ddi,"/", list.files(ddi))
+xmlfile <- xmlTreeParse(ddi)
+
+# the xml file is now saved as an object you can easily work with in R:
+class(xmlfile)
+
+# Use the xmlRoot-function to access the top node
+
+xmltop = xmlRoot(xmlfile)
+
+# have a look at the XML-code of the first subnodes:
+print(xmltop)[1]
+
+# To extract the XML-values from the document, use xmlSApply:
+
+plantcat <- xmlSApply(xmltop, function(x) xmlSApply(x, xmlValue))
 
 
+# Finally, get the data in a data-frame and have a look at the first rows and columns
 
-
-
-
-
-
-
-
-##--Try out Interview Table, consider changing cast inside interview_Table
-ia <- paste0(wdir,
-             "/",
-             "uganda_interviewActions/",
-             "interview_actions.tab")
-
-ia <- read.delim(ia,
-                 stringsAsFactors = FALSE,
-                 sep = "\t")
-
-source("R/interviewTable.R")
-ia <- interviewTable(ia)
-
-
-
-table <- int.df %>%
-            group_by(variable_name) %>%
-            summarize(N = n(),
-                      Average = mean(itemResponseTimeSecs, na.rm = TRUE),
-                      Max = max(itemResponseTimeSecs, na.rm = TRUE),
-                      Min = min(itemResponseTimeSecs, na.rm = TRUE))
-
-data.frame(table)
-
-#determine order
-
-
-
-#identify the answerset time of the 
+plantcat_df <- data.frame(t(plantcat),row.names=NULL)
+plantcat_df[1:5,1:4]
 
 
 

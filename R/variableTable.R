@@ -15,15 +15,16 @@ variableTable <- function(df = df){
   #-Compute item response statistics
   rstats <- df %>%
     filter(role == "Interviewer") %>%
-    filter(!is.na(posix) & !(action %in% c("CommentSet",
-                                           "AnswerRemoved"))) %>%
+    filter(!(nchar(variable_name) == 32)) %>%
+    #filter(!is.na(posix) & !(action %in% c("CommentSet",
+    #                                       "AnswerRemoved"))) %>%
     group_by(variable_name) %>%
     summarize(N = n(), 
-              avg = mean(SecsSinceLastAction, na.rm = TRUE),
-              med = median(SecsSinceLastAction, na.rm = TRUE),
-              max = max(SecsSinceLastAction, na.rm = TRUE),
-              min = min(SecsSinceLastAction, na.rm = TRUE),
-              sd = sd(SecsSinceLastAction, na.rm = TRUE))
+              avgInSecs = mean(SecsSinceLastAction, na.rm = TRUE),
+              medInSecs = median(SecsSinceLastAction, na.rm = TRUE),
+              maxInSecs = max(SecsSinceLastAction, na.rm = TRUE),
+              minInSecs = min(SecsSinceLastAction, na.rm = TRUE),
+              sdInSecs = sd(SecsSinceLastAction, na.rm = TRUE))
   
   #- Count comments - Maybe makes sense to include the number of comments by enumerator!
   comm <- df %>%
@@ -38,10 +39,9 @@ variableTable <- function(df = df){
                   all = TRUE)
   
   master$comments[is.na(master$comments)] <- 0
-  
 
   #- Count answers removed
-  length(filter(df, action == "AnswerRemoved"))
+  #length(filter(df, action == "AnswerRemoved"))
     
   
   #- AnswerRemoved status does not give a variable name, use the order
@@ -52,6 +52,6 @@ variableTable <- function(df = df){
  
  
  
-  data.frame(rstats)
+data.frame(master)
   
 }

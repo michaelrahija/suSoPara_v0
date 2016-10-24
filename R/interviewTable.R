@@ -55,8 +55,8 @@ interviewTable <- function(x){
     ##########################################
     approval <- x %>%
                   group_by(id) %>%
-                  summarize(HQApproved=sum(Action == "ApproveByHeadquarter"),
-                            SuperApproved = sum(Action == "ApproveBySupervisor"))
+                  summarize(HQApproved=sum(Action == "ApprovedByHeadquarter"),
+                            SuperApproved = sum(Action == "ApprovedBySupervisor"))
                 
     approval <- as.data.frame(approval)
 

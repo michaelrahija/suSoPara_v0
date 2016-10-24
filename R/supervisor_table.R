@@ -3,12 +3,12 @@
 supervisor_table <- function(data){
   
     #organize dataframe for subsetting
-    source("R/interview_table.R")
-    interviewtable <- interview_table(data)
+    source("R/interviewTable.R")
+    interviewtable <- interviewTable(data)
     interviewtable <- interviewtable[!is.na(interviewtable$Interviewer),] # remove NAs
   
     #Load configuration file
-    config.df <- read.csv(file="configuration.csv",head=TRUE,sep=",")
+    #config.df <- read.csv(file="configuration.csv",head=TRUE,sep=",")
   
     #convert Supervisor to character
     interviewtable$Supervisor <- as.character(interviewtable$Supervisor)

@@ -5,27 +5,15 @@ library(stringr)
 interviewer_table <- function(data){
     
     #organize dataframe for subsetting
-    source("R/interview_table.R")
-    interviewtable <- interview_table(data)
+    source("R/interviewTable.R")
+    interviewtable <- interviewTable(data)
     interviewtable <- interviewtable[!is.na(interviewtable$Interviewer),] # remove NAs
-    
-    #Load configuration file
-    config.df <- read.csv(file="configuration.csv",head=TRUE,sep=",")
-    
-    #convert Supervisor to character
-    interviewtable$Supervisor <- as.character(interviewtable$Supervisor)
-    
     
     #create Supervisor,Interviews, HQApproved, and Superapproved columns
     start = interviewtable %>%
                           group_by(Interviewer) %>%
-                          summarize(
-                            Supervisor = paste(unique(Supervisor),collapse = ","), #If there is > 1 Super, we collapse
-                            Interviews = length(unique(id)),
-                            HQApproved = sum(HQApproved),
+                          summarize(Interviews = length(unique(id)),
                             SuperApproved = sum(SuperApproved))
-    
-    start$Supervisor = gsub("^,","",start$Supervisor)
     
     #################################################################
     ## SET WARNINGS: IF SOME INTERVIEWS HAVE > 1 INTERVIEWER, THEN  #
@@ -48,35 +36,21 @@ interviewer_table <- function(data){
     }
     
     ##############################################################
-    # TRIM INTERVIEW TABLE AND REMOVE INTERVIEWS THAT ARE EITHER #
-    # NOT STARTED OR NOT FINISHED                                #
+    ##              ADD IN INTERVIEWER NAMES                     #
     ##############################################################
-    interviewtable = interviewtable[!is.na(interviewtable$Starttime),]
-    interviewtable = interviewtable[!is.na(interviewtable$Endtime),]
+    #config <- read.csv("config/config.csv")
     
-    #Populate averageinterviewtime and medianinterviewtime 
-    index <- 1:length(interviewers)
-    averageinterviewtime <- c()
-    medianinterviewtime <- c()
-    for (i in index){
-      
-      #subset interviewtabale for interviewer[i]
-      duration.df <- interviewtable[interviewtable$Interviewer == interviewers[i],] ##sub 2 w/ i
-
-      diffinseconds <- difftime(duration.df$Endtime,duration.df$Starttime, units = "secs")
-      
-      source('R/converttime.R')
-      
-      average <- converttime(mean(diffinseconds))
-      median <- converttime(median(diffinseconds))
-      
-      
-      averageinterviewtime <- append(averageinterviewtime, average)
-      medianinterviewtime <- append(medianinterviewtime, median)   
-      
-    }
-    
-    master <- as.data.frame(cbind(start[!test,], 
-              averageinterviewtime, medianinterviewtime)) ##HAVE TO FIGURE OUT THE NA'S IN THE TIMES FOR OPM DATA
-master
+#     temp.list <- start$Interviewer
+#     names <- c()
+#     
+#     for(i in 1:length(temp.list)){
+#       names.temp <- as.character(config[temp.list[i] == config$interviewname,2])
+#       names <- append(names,names.temp)
+#     }
+#     
+#     start$Names <- names
+# 
+# start[,c(1,4,2,3)]
+# 
+start
 }
